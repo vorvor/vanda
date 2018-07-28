@@ -24,7 +24,9 @@
 			.dtp-btn-cancel,
 			.dtp-btn-ok {
 				width: 100%;
-				height: 40px;
+			    height: 65px;
+			    background: red;
+			    font-size: 2em;
 			}
 
 			#time {
@@ -40,6 +42,10 @@
 
 			.dtp > .dtp-content {
 				max-width: 400px;
+			}
+
+			.dtp-select-hour-text {
+    			font-size: 2em;
 			}
 			
 		</style>
@@ -67,8 +73,15 @@
 			});
 
 			var dt = new Date();
-			var time = dt.getHours() + ":" + dt.getMinutes();
-			$('#time').val(time);
+			var hours = dt.getHours();
+			if (hours < 10) {
+				hours = '0' + hours;
+			}
+			var minutes = dt.getMinutes();
+			if (minutes < 10) {
+				minutes = '0' + minutes;
+			}
+			$('#time').val(hours +':' + minutes);
 
 			$('.change').click(function() {
 				console.log(parseInt($(this).data('val')));
