@@ -14,89 +14,120 @@
 		<script type="text/javascript" src="http://momentjs.com/downloads/moment-with-locales.min.js"></script>
 		<script type="text/javascript" src="./js/bootstrap-material-datetimepicker.js"></script>
 
-		<style>
-			
-			body {
-				padding-top: 70px;
-				font-family: 'Roboto', sans-serif;
-			}
 
-			.dtp-btn-cancel,
-			.dtp-btn-ok {
-				width: 100%;
-			    height: 65px;
-			    background: red;
-			    font-size: 2em;
-			}
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script type="text/javascript" src="./js/script.js"></script>
 
-			#time {
-				font-size: 3em;
-			}
 
-			.change {
-				width: 63px;
-    			height: 60px;
-    			background: red;
-    			font-size: 3em;
-			}
-
-			.dtp > .dtp-content {
-				max-width: 400px;
-			}
-
-			.dtp-select-hour-text {
-    			font-size: 2em;
-			}
-			
-		</style>
+		
 		
 	</head>
 	<body>
 		
-		
-		<input type="text" id="time" class="form-control floating-label" placeholder="Time">
 		<div>
-		<input type="button" value="-" class="change" data-val="-1">
-		<input type="button" value="+" class="change" data-val="1"> 
-	</div>
+			<input type="text" id="time">
+			<div>
+				<input type="button" value="-" class="change" data-val="-1" data-dest="time">
+				<input type="button" value="+" class="change" data-val="1" data-dest="time"> 
+			</div>
+		</div>
+		<div>
+			<input type="text" id="amount" placeholder="amount" data-default="1">
+			<input type="text" id="unit" placeholder="" data-default="">
+			<div>
+				<input type="button" value="-10" class="change" data-val="-10" data-dest="amount">
+				<input type="button" value="-5" class="change" data-val="-5" data-dest="amount">
+				<input type="button" value="-2" class="change" data-val="-2" data-dest="amount">
+				<input type="button" value="-1" class="change" data-val="-1" data-dest="amount">
+				<input type="button" value="+1" class="change" data-val="1" data-dest="amount"> 
+				<input type="button" value="+2" class="change" data-val="2" data-dest="amount">
+				<input type="button" value="+5" class="change" data-val="5" data-dest="amount">
+				<input type="button" value="+10" class="change" data-val="10" data-dest="amount">
+				<input type="button" value="reset" class="reset" data-dest="amount">
+			</div>
+		</div>
+		<div>
+			<input type="text" id="event" placeholder="szopi" data-default="">
+			<div>
+				<input type="button" value="" class="change-event" data-val="szopi" data-dest="event">
+				<input type="button" value="" class="change-event" data-val="mérés" data-dest="event">
+				<input type="button" value="" class="change-event" data-val="pelenkázás" data-dest="event">
+				<input type="button" value="" class="change-event" data-val="alvás" data-dest="event">
+				<input type="button" value="" class="change-event" data-val="egyéb" data-dest="event">
+			</div>
+		</div>
+		<div>
+			<input type="submit" class="submit" value="mentés">
+		</div>
 		
 		<script type="text/javascript">
 		$(document).ready(function()
 		{
 			
+			init();
 
-			$('#time').bootstrapMaterialDatePicker
-			({
-				date: false,
-				shortTime: false,
-				format: 'HH:mm'
-			});
+			function init() {
+				$('#time').bootstrapMaterialDatePicker
+				({
+					date: false,
+					shortTime: false,
+					format: 'HH:mm'
+				});
 
-			var dt = new Date();
-			var hours = dt.getHours();
-			if (hours < 10) {
-				hours = '0' + hours;
+				var dt = new Date();
+				var hours = dt.getHours();
+				if (hours < 10) {
+					hours = '0' + hours;
+				}
+				var minutes = dt.getMinutes();
+				if (minutes < 10) {
+					minutes = '0' + minutes;
+				}
+				$('#time').val(hours +':' + minutes);
+				$('#amount').val(1);
+				$('input[data-dest="event"]').each(function() {
+					$(this).val($(this).data('val'));
+				})
+
 			}
-			var minutes = dt.getMinutes();
-			if (minutes < 10) {
-				minutes = '0' + minutes;
-			}
-			$('#time').val(hours +':' + minutes);
 
 			$('.change').click(function() {
-				console.log(parseInt($(this).data('val')));
-				time = $('#time').val().split(':');
-				min = parseInt(time[1]) + parseInt($(this).data('val'));
-				if (min > 59) {
-					min = '00';
+
+				dest = '#' + $(this).data('dest');
+				console.log(dest);
+
+				if (dest == '#time') {
+					time = $(dest).val().split(':');
+					min = parseInt(time[1]) + parseInt($(this).data('val'));
+					if (min > 59) {
+						min = '00';
+					}
+					if (min < 0) {
+						min = 59;
+					}
+					if (min < 10 && min !== '00') {
+						min = '0' + min;
+					}
+
+					$(dest).val(time[0] + ':' + min);
+			    }
+			    if (dest == '#amount') {
+			    	$(dest).val(parseInt($(dest).val()) + parseInt($(this).data('val')));
+			    }
+
+				
+			})
+
+			$('.reset').click(function() {
+				dest = '#' + $(this).data('dest');
+				$(dest).val($(dest).data('default'));
+			})
+
+			$('.change-event').click(function() {
+				$('#event').val($(this).data('val'));
+				if ($(this).data('val') == 'egyéb') {
+					$('#event').val("").focus();
 				}
-				if (min < 0) {
-					min = 59;
-				}
-				if (min < 10 && min !== '00') {
-					min = '0' + min;
-				}
-				$('#time').val(time[0] + ':' + min);
 			})
 
 			
